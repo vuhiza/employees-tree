@@ -1,0 +1,34 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "admin", "-d", "digivest" ]
+      interval: 5s
+      retries: 5
+    environment:
+      - POSTGRES_DB=${DEFAULT_DATABASE_DB}
+      - POSTGRES_USER=${DEFAULT_DATABASE_USER}
+      - POSTGRES_PASSWORD=${DEFAULT_DATABASE_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "${DEFAULT_DATABASE_PORT}:5432"
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+#  app:
+#    build:
+#      dockerfile: ./Docker/Dockerfile.api
+#    environment:
+#      DEBUG: "true"
+#      POSTGRES_HOST: "postgresql"
+#      REDIS_HOST: "api_redis"
+#      REDIS_PASSWORD: "admin"
+#    restart: always
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - postgres
+
+volumes:
+  postgres-db-volume:

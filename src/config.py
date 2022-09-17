@@ -1,17 +1,37 @@
 from typing import Any
 
-from pydantic import BaseSettings
+from pydantic import BaseSettings, validator, PostgresDsn
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
 
 class Settings(BaseSettings):
-    db_url: str = "sqlite+aiosqlite:///./db.sqlite"
-    DEBUG: bool = True
+    DEFAULT_DATABASE_HOSTNAME: str
+    DEFAULT_DATABASE_USER: str
+    DEFAULT_DATABASE_PASSWORD: str
+    DEFAULT_DATABASE_PORT: str
+    DEFAULT_DATABASE_DB: str
+    DEFAULT_SQLALCHEMY_DATABASE_URI: str = ""
+
     db: AsyncEngine = None
+
+    @validator("DEFAULT_SQLALCHEMY_DATABASE_URI")
+    def _assemble_default_db_connection(cls, v: str, values: dict[str, str]) -> str:
+        return PostgresDsn.build(
+            scheme="postgresql+asyncpg",
+            user=values["DEFAULT_DATABASE_USER"],
+            password=values["DEFAULT_DATABASE_PASSWORD"],
+            host=values["DEFAULT_DATABASE_HOSTNAME"],
+            port=values["DEFAULT_DATABASE_PORT"],
+            path=f"/{values['DEFAULT_DATABASE_DB']}",
+        )
+
+    class Config:
+        env_file = f"../.env"
+        case_sensitive = True
 
     def __init__(self, **values: Any):
         super().__init__(**values)
-        self.db = create_async_engine(self.db_url)
+        self.db = create_async_engine(self.DEFAULT_SQLALCHEMY_DATABASE_URI)
 
 
 settings = Settings()

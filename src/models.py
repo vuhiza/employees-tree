@@ -8,8 +8,9 @@ from sqlalchemy import Column, VARCHAR
 from sqlmodel import SQLModel, Field
 
 
-class EmployeePost(enum.Enum):
+class EmployeePost(str, enum.Enum):
     chief = "chief"
+    programmer = "programmer"
 
 
 class Employee(SQLModel, table=True):
@@ -18,7 +19,7 @@ class Employee(SQLModel, table=True):
     last_name: str = Field(sa_column=Column(VARCHAR(255)), nullable=False)
     patronymic_name: str = Field(sa_column=Column(VARCHAR(255)), nullable=False)
     # Better to use another table as a foreign key for this
-    post: str
+    post: EmployeePost = EmployeePost.chief.value
     employment_date: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
     salary: Decimal = Field(default=0.0)
 

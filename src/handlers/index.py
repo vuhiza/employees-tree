@@ -5,14 +5,14 @@ routes = web.RouteTableDef()
 
 @routes.get('/')
 async def index(request):
-    return web.FileResponse('./static/index.html')
+    return web.FileResponse('../static/index.html')
 
 
 @routes.get('/index.js')
 async def index(request):
-    return web.FileResponse('./static/index.js')
+    return web.FileResponse('../static/index.js')
 
 
 @routes.get('/index.css')
 async def index(request):
-    return web.FileResponse('./static/index.css')
+    return web.FileResponse('../static/index.css')
