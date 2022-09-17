@@ -5,6 +5,7 @@ routes = web.RouteTableDef()
 
 @routes.get('/')
 async def index(request):
+    # return web.json_response({'message': 'Hello, world!'})
     return web.FileResponse('../static/index.html')
 
 

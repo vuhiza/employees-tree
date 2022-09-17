@@ -1,5 +1,5 @@
 from typing import Any
-
+import os.path
 from pydantic import BaseSettings, validator, PostgresDsn
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
@@ -26,12 +26,12 @@ class Settings(BaseSettings):
         )
 
     class Config:
-        env_file = f"../.env"
+        env_file = "../.env" if os.path.exists("../.env") else "./.env"
         case_sensitive = True
 
     def __init__(self, **values: Any):
         super().__init__(**values)
-        self.db = create_async_engine(self.DEFAULT_SQLALCHEMY_DATABASE_URI)
+        self.db = create_async_engine(self.DEFAULT_SQLALCHEMY_DATABASE_URI, pool_size=20, max_overflow=40)
 
 
 settings = Settings()

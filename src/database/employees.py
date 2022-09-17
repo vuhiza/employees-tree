@@ -1,3 +1,6 @@
+import asyncio
+from typing import Any
+
 from sqlmodel import select, insert, update
 
 from config import settings
@@ -33,11 +36,16 @@ class EmployeesDB:
 
             return [dict(r) for r in result]
 
-    async def get_childs_recursive(self, employee_id: str) -> list[dict]:
-        childs = await self.get_childs(employee_id)
-        for child in childs:
-            child['childs'] = await self.get_childs_recursive(child['id'])
-        return childs
+    async def get_childs_recursive(self, employee_id: str) -> list[dict] | Any:
+        children = await self.get_childs(employee_id)
+
+        async def _assign_childs(child: dict) -> dict:
+            child['childs'] = await self.get_childs_recursive(child.get('id'))
+            return child
+
+        children = await asyncio.gather(*[_assign_childs(child) for child in children])
+
+        return children
 
     async def get_tree(self):
         async with self.db.begin() as conn:
