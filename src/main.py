@@ -1,6 +1,10 @@
-from aiohttp import web
+import logging
 
+from aiohttp import web
 from handlers import employees, index
+
+# Add logging
+logging.basicConfig(level=logging.DEBUG)
 
 app = web.Application()
 app.add_routes(employees.routes)

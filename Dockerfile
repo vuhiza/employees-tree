@@ -12,7 +12,3 @@ RUN poetry config virtualenvs.create false && poetry install --no-dev --no-inter
 COPY ./ /app
 WORKDIR /app/src
 EXPOSE 8080
-
-
-#CMD ["alembic upgrade head && python ./main.py"]
-#CMD [""]

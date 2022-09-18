@@ -2,3 +2,6 @@
 
 # Needed for testing
 *.sqlite
+
+*/.idea
+*/__pycache__
